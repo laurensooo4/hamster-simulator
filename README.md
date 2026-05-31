@@ -6,6 +6,15 @@ Programmieren-Lernen mit dem Hamster, komplett ohne Java-Installation.
 Alles steckt in **einer einzigen Datei**: [`index.html`](index.html). Keine
 Abhängigkeiten, kein Internet nötig, läuft offline.
 
+## 🌍 Online
+
+**Live: https://laurensooo4.github.io/hamster-simulator/**
+
+Gehostet über GitHub Pages (Repo `laurensooo4/hamster-simulator`).
+Änderungen veröffentlichen: `index.html` bearbeiten, dann **`publish.bat`**
+doppelklicken (oder `git add -A && git commit -m "Update" && git push`) –
+die Live-Seite aktualisiert sich in ~1 Minute.
+
 ## Starten
 
 **Variante A – einfach doppelklicken**
