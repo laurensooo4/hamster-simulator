@@ -1,77 +1,41 @@
-# 🐹 Hamster-Simulator – Web-Edition
+# 🐹 Hamster-Klassenzimmer
 
-Eine browserbasierte Nachbildung des Java-Hamster-Modells (nach D. Boles) – zum
-Programmieren-Lernen mit dem Hamster, komplett ohne Java-Installation.
-
-Alles steckt in **einer einzigen Datei**: [`index.html`](index.html). Keine
-Abhängigkeiten, kein Internet nötig, läuft offline.
-
-## 🌍 Online
+Lern-Plattform zum Programmieren mit dem Hamster – mit **Lehrer- und Schüler-Logins**,
+Klassen, Aufgaben (mit Territorium-Editor), Abgaben und Abgabe-Matrix.
 
 **Live: https://laurensooo4.github.io/hamster-simulator/**
 
-Gehostet über GitHub Pages (Repo `laurensooo4/hamster-simulator`).
-Änderungen veröffentlichen: `index.html` bearbeiten, dann **`publish.bat`**
-doppelklicken (oder `git add -A && git commit -m "Update" && git push`) –
-die Live-Seite aktualisiert sich in ~1 Minute.
+## Demo-Logins
 
-## Starten
+| Rolle | Login |
+|---|---|
+| 👨‍🏫 Lehrer | `testlehrer` / `mainmixaufmute` |
+| 🎒 Schüler | `max.muster` / `passwort123` |
 
-**Variante A – einfach doppelklicken**
-`index.html` im Datei-Explorer doppelklicken → öffnet sich im Browser. Fertig.
+Oder neu registrieren → Rolle wählen → Schüler:innen treten mit einem Klassencode bei.
 
-**Variante B – als „echte" Website / im Netzwerk (z. B. Raspberry Pi)**
-Im Ordner einen kleinen Webserver starten:
+## Funktionen
 
-```bash
-# Python (auf dem Pi vorinstalliert)
-python3 -m http.server 8765
-```
+- **Logins** (Username + Passwort, sicher gehasht über Supabase)
+- **Lehrer:** Klassen anlegen (mit Einlade-Code), Aufgaben stellen (Beschreibung +
+  Territorium per Editor + optionaler Auto-Check), **Abgabe-Matrix**, Abgaben ansehen
+- **Schüler:** Klasse per Code beitreten, Aufgaben im eingebetteten Hamster-Simulator
+  lösen, **Abgeben**-Button
+- **Auto-Check:** prüft die Abgabe automatisch (z. B. „alle Körner gefressen")
+- Voller Hamster-Java-Sprachumfang (Schleifen, Verzweigungen, Prozeduren, Arrays,
+  `String`, `Territorium`-Abfragen …) im Editor mit Syntax-Highlighting & Einzelschritt
 
-Dann im Browser öffnen:
-- am Gerät selbst: `http://localhost:8765`
-- von anderen Geräten im WLAN: `http://<IP-des-Pi>:8765`
+## Technik
 
-Soll die Seite beim Hochfahren des Pi automatisch laufen, lässt sich das per
-`systemd`-Service einrichten – sag einfach Bescheid.
+- **Frontend:** statisch (HTML/CSS/JS), gehostet auf GitHub Pages
+- **Backend:** [Supabase](https://supabase.com) (PostgreSQL + Auth), Zugriff über
+  Row-Level-Security. Schema/Regeln in [`schema.sql`](schema.sql), Einrichtung in
+  [`SETUP.md`](SETUP.md).
+- `engine.js` enthält den kompletten Hamster-Simulator als wiederverwendbare Komponente.
 
-## Was kann der Simulator?
+## Hinweise
 
-- **Programmieren in der gewohnten Hamster-Java-Syntax**
-  `vor()`, `linksUm()`, `gib()`, `nimm()`, `vornFrei()`, `kornDa()`, `maulLeer()`,
-  `schreib(...)`, `getReihe()`, `getSpalte()`, `getBlickrichtung()`, `getAnzahlKoerner()`
-- **`Territorium`-Abfragen:** `Territorium.getAnzahlReihen()`, `getAnzahlSpalten()`,
-  `mauerDa(r,s)`, `getAnzahlKoerner()` und `getAnzahlKoerner(r,s)`.
-- **Kontrollstrukturen:** `if/else`, `while`, `do…while`, `for`, `break`, `continue`,
-  eigene Prozeduren `void name() {…}` und Testfunktionen `boolean test() {…}`,
-  Parameter, `&&  ||  !`, Vergleiche, Rechnen.
-- **Datentypen:** `int`, `boolean`, **`String`** (mit `.length()`, `.equals()`,
-  `.substring()`, `.toUpperCase()` …) und **Arrays** (`int[] a = new int[5];`,
-  `a[i]`, `a.length`, Array-Literale `{1, 2, 3}`).
-- **Animiertes Territorium** mit Gras, Mauern und Körnern.
-- **Steuerung:** Start, Pause/Weiter, Einzelschritt, Stopp, Tempo-Regler, **Ton an/aus**.
-- **Editier-Modus:** Mauern/Körner/Hamster per Klick setzen, Feldgröße ändern,
-  Körner im Maul festlegen, eigene Territorien speichern (im Browser).
-- **Datei-Export/Import:** Programme (`.ham`) und Territorien (`.json`)
-  als Datei speichern und wieder laden (Buttons ⤓ / ⤒).
-- **Beispielprogramme & Beispiel-Territorien** zum direkten Ausprobieren.
-- Echte Hamster-Fehlermeldungen: `MauerDaException`, `MaulLeerException`,
-  `KachelLeerException` – mit Zeilennummer.
-
-## Beispiel
-
-```java
-// Der Hamster läuft, bis eine Mauer im Weg ist.
-void main() {
-    while (vornFrei()) {
-        vor();
-    }
-}
-```
-
-## Grenzen
-
-Nur die **imperative** Hamster-Syntax (Methoden + `void main()`). Der
-objektorientierte Modus mit mehreren Hamstern (`new Hamster(...)`) und volle
-Java-Klassen werden bewusst nicht unterstützt – dafür gibt es weiterhin den
-originalen Desktop-Simulator (`hamstersimulator.jar`, benötigt Java).
+- Der frühere **freie Simulator** (ohne Login) liegt lokal im Ordner
+  `freier-simulator-backup/` und in der Git-Historie dieses Repos.
+- Änderungen veröffentlichen: `index.html`/`app.js`/`engine.js` anpassen, dann
+  `git push` (bzw. `publish.bat`) – GitHub Pages baut in ~1 Minute neu.

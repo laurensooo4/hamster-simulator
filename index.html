@@ -3,1205 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🐹 Hamster-Simulator</title>
+<title>🐹 Hamster-Klassenzimmer</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐹</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#eef2f8; --bg2:#e3e9f3;
-    --card:#ffffff; --ink:#26303d; --muted:#6b7888; --line:#e3e8ef;
-    --accent:#e7a13a; --accent-d:#c9851f;
-    --green:#5aa55a; --green-d:#478547;
-    --red:#d4584e;
-    --grass1:#a7d96b; --grass2:#9bcf5d;
-    --brick:#b76a5b; --brick-d:#9d5749;
-    --code-bg:#1f2530; --code-ink:#d6dbe4; --gutter:#2a313e; --gutter-ink:#5d6675;
-    --radius:16px; --shadow:0 10px 30px rgba(40,55,80,.10), 0 2px 6px rgba(40,55,80,.06);
-    --line-h:21px; --code-pad:13px;
+    --green:#58cc02; --green-d:#46a302; --green-l:#d7ffb8;
+    --blue:#1cb0f6; --blue-d:#1899d6;
+    --gold:#e7a13a; --gold-d:#c9851f;
+    --red:#ff4b4b; --red-d:#e63a3a;
+    --purple:#ce82ff;
+    --ink:#3c4858; --muted:#7a8aa0; --line:#e6ebf2; --line2:#eef2f7;
+    --bg:#f7f9fc; --card:#fff;
+    --radius:18px; --shadow:0 8px 26px rgba(40,60,90,.10);
+    font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0; font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
-    color:var(--ink); background:linear-gradient(160deg,var(--bg1),var(--bg2)); overflow:hidden;
-  }
-  .app{display:flex;flex-direction:column;height:100vh;padding:14px;gap:12px}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:inherit;font-weight:600}
+  a{color:var(--blue);text-decoration:none}
+  h1,h2,h3{font-weight:900;letter-spacing:-.2px}
 
-  /* Header */
-  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .logo{display:flex;align-items:center;gap:11px;margin-right:auto}
-  .logo .badge{font-size:30px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.15))}
-  .logo h1{font-size:20px;margin:0;font-weight:700;letter-spacing:.2px}
-  .logo p{margin:0;font-size:12px;color:var(--muted)}
-  header .sel{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
-  select,button,input{font-family:inherit}
-  select{
-    appearance:none;background:var(--card);border:1px solid var(--line);color:var(--ink);
-    padding:8px 30px 8px 12px;border-radius:10px;font-size:13.5px;cursor:pointer;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236b7888' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:right 10px center;
-  }
-  select:hover{border-color:#cdd5e0}
+  /* ---------- Splash ---------- */
+  #splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);z-index:100;transition:opacity .3s}
+  #splash.hide{opacity:0;pointer-events:none}
+  #splash .h{font-size:60px;animation:bounce 1s infinite}
+  #splash .t{color:var(--muted);font-weight:800}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 
-  /* Layout */
-  .main{display:grid;grid-template-columns:minmax(360px,1fr) minmax(420px,1.15fr);gap:12px;flex:1;min-height:0}
-  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0;overflow:hidden}
-  .panel-head{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);font-weight:600;font-size:14px}
-  .panel-head .sub{font-weight:400;color:var(--muted);font-size:12.5px;margin-left:auto}
+  /* ---------- Buttons (Duolingo-3D) ---------- */
+  .btn{border:none;border-radius:14px;font-family:inherit;font-weight:800;cursor:pointer;padding:13px 20px;font-size:15px;letter-spacing:.3px;transition:transform .06s,box-shadow .06s,filter .1s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+  .btn:active{transform:translateY(2px)}
+  .btn-primary{background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green-d)}
+  .btn-primary:active{box-shadow:0 2px 0 var(--green-d)}
+  .btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue-d)}
+  .btn-blue:active{box-shadow:0 2px 0 var(--blue-d)}
+  .btn-gold{background:var(--gold);color:#fff;box-shadow:0 4px 0 var(--gold-d)}
+  .btn-danger{background:#fff;color:var(--red);box-shadow:0 0 0 2px var(--red) inset}
+  .btn-ghost{background:#fff;color:var(--ink);box-shadow:0 0 0 2px var(--line) inset}
+  .btn-ghost:active{transform:translateY(1px)}
+  .btn:disabled{opacity:.5;cursor:default;transform:none!important}
+  .btn-sm{padding:8px 14px;font-size:13.5px;border-radius:11px}
+  .btn-lg{padding:16px 26px;font-size:17px;width:100%}
 
-  /* Editor */
-  .left{min-width:0}
-  .editor{display:flex;flex:1;min-height:0;background:var(--code-bg)}
-  #gutter{width:46px;flex:none;background:var(--gutter);overflow:hidden;position:relative;border-right:1px solid #323a47}
-  #gutterInner{position:absolute;top:0;left:0;right:0;padding:var(--code-pad) 8px var(--code-pad) 0;text-align:right;white-space:pre;
-    font-family:"JetBrains Mono","Fira Mono",Consolas,monospace;font-size:14px;line-height:var(--line-h);color:var(--gutter-ink)}
-  .codebox{position:relative;flex:1;min-width:0;overflow:hidden}
-  #codeHL,#code{
-    position:absolute;inset:0;margin:0;padding:var(--code-pad);border:0;
-    font-family:"JetBrains Mono","Fira Mono",Consolas,monospace;font-size:14px;line-height:var(--line-h);
-    white-space:pre;tab-size:4;overflow:auto;
-  }
-  #codeHL{pointer-events:none;color:var(--code-ink);overflow:hidden}
-  #code{background:transparent;color:transparent;caret-color:#fff;resize:none;outline:none}
-  #code::selection{background:rgba(231,161,58,.35)}
-  #activeLine{position:absolute;left:0;right:0;height:var(--line-h);background:rgba(231,161,58,.16);
-    border-left:3px solid var(--accent);pointer-events:none;display:none}
-  #activeLine.err{background:rgba(212,88,78,.18);border-left-color:var(--red)}
-  /* syntax colors */
-  .c-kw{color:#c792ea}.c-type{color:#82d2ff}.c-lit{color:#ff9e7a}.c-cmd{color:#82aaff}
-  .c-test{color:#ffcb6b}.c-cst{color:#f78cc4}.c-str{color:#c3e88d}.c-num{color:#ff9e7a}.c-com{color:#5f6b7d;font-style:italic}
+  /* ---------- Inputs ---------- */
+  .field{margin:0 0 14px}
+  .field label{display:block;font-weight:800;font-size:13px;color:var(--muted);margin:0 0 5px;text-transform:uppercase;letter-spacing:.5px}
+  .input{width:100%;border:2px solid var(--line);background:#fbfdff;border-radius:13px;padding:13px 15px;font-family:inherit;font-size:16px;font-weight:700;color:var(--ink);transition:.12s}
+  .input:focus{outline:none;border-color:var(--blue);background:#fff}
+  textarea.input{resize:vertical;min-height:90px;font-weight:600}
 
-  /* Controls */
-  .controls{display:flex;align-items:center;gap:7px;padding:10px 12px;border-top:1px solid var(--line);flex-wrap:wrap;background:#fafbfd}
-  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);
-    padding:8px 13px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.12s;white-space:nowrap}
-  .btn:hover:not(:disabled){border-color:#cdd5e0;transform:translateY(-1px)}
-  .btn:active:not(:disabled){transform:translateY(0)}
-  .btn:disabled{opacity:.42;cursor:default}
-  .btn.primary{background:var(--green);border-color:var(--green-d);color:#fff}
-  .btn.primary:hover:not(:disabled){background:var(--green-d)}
-  .btn.warn{background:#fff;border-color:#f0d2cd;color:var(--red)}
-  .btn.icon{padding:8px 11px}
-  .speed{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:12.5px;color:var(--muted)}
-  .speed input{width:120px;accent-color:var(--accent);cursor:pointer}
+  /* ---------- Auth ---------- */
+  .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:radial-gradient(1200px 500px at 50% -10%, #eaf7ff, transparent), var(--bg)}
+  .auth-card{background:var(--card);border-radius:26px;box-shadow:var(--shadow);width:100%;max-width:430px;padding:30px 30px 26px;animation:pop .35s cubic-bezier(.2,1.2,.4,1)}
+  @keyframes pop{from{transform:scale(.94) translateY(10px);opacity:0}to{transform:none;opacity:1}}
+  .auth-card .mascot{font-size:58px;text-align:center;line-height:1}
+  .auth-card h1{text-align:center;font-size:25px;margin:8px 0 2px}
+  .auth-card .sub{text-align:center;color:var(--muted);font-weight:700;margin:0 0 20px;font-size:14.5px}
+  .tabs{display:flex;background:var(--line2);border-radius:14px;padding:5px;margin:0 0 22px;gap:4px}
+  .tabs button{flex:1;border:none;background:transparent;font-family:inherit;font-weight:800;font-size:14.5px;color:var(--muted);padding:10px;border-radius:10px;cursor:pointer}
+  .tabs button.active{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+  .role-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+  .role-opt{border:2px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;font-weight:800;transition:.12s;background:#fff}
+  .role-opt .ic{font-size:26px;display:block;margin-bottom:4px}
+  .role-opt.active{border-color:var(--green);background:#f3ffe9;color:var(--green-d)}
+  .auth-msg{border-radius:12px;padding:10px 13px;font-weight:800;font-size:14px;margin:0 0 14px;display:none}
+  .auth-msg.err{display:block;background:#fff0f0;color:var(--red-d)}
+  .auth-msg.ok{display:block;background:#f0fff0;color:var(--green-d)}
+  .auth-foot{text-align:center;color:var(--muted);font-size:13px;margin:16px 0 0;font-weight:700}
 
-  /* Right column */
-  .right{min-width:0}
-  .board-toolbar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap;background:#fafbfd}
-  .board-toolbar .tools{display:none;align-items:center;gap:6px}
-  .board-toolbar.editing .tools{display:flex}
-  .tool{border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 10px;font-size:12.5px;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
-  .tool.active{border-color:var(--accent);background:#fff7ea;color:var(--accent-d);font-weight:600}
-  .sizebox{display:flex;align-items:center;gap:4px;font-size:12.5px;color:var(--muted)}
-  .sizebox input{width:46px;border:1px solid var(--line);border-radius:8px;padding:5px 6px;font-size:13px;text-align:center}
-  #boardWrap{flex:1;min-height:240px;display:flex;align-items:center;justify-content:center;padding:16px;
-    background:radial-gradient(circle at 50% 40%, #f4f8ee, #e9f0e0)}
-  #board{position:relative;display:grid;border-radius:10px;overflow:hidden;
-    box-shadow:0 6px 20px rgba(60,80,40,.18), inset 0 0 0 2px rgba(255,255,255,.35);
-    grid-template-columns:repeat(var(--cols),var(--cell));grid-template-rows:repeat(var(--rows),var(--cell))}
-  .tile{position:relative;width:var(--cell);height:var(--cell);display:flex;align-items:center;justify-content:center}
-  .tile.g0{background:var(--grass1)}.tile.g1{background:var(--grass2)}
-  .tile.wall{background:
-    linear-gradient(var(--brick-d),var(--brick-d)) 0 0/100% 2px no-repeat,
-    linear-gradient(var(--brick-d),var(--brick-d)) 0 50%/100% 2px no-repeat,
-    repeating-linear-gradient(90deg,var(--brick) 0 calc(50% - 1px),var(--brick-d) calc(50% - 1px) calc(50% + 1px),var(--brick) calc(50% + 1px) 100%);
-    background-color:var(--brick);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
-  .editing .tile{cursor:pointer}
-  .editing .tile:hover{outline:2px solid rgba(231,161,58,.6);outline-offset:-2px;z-index:2}
-  .grains{display:flex;flex-wrap:wrap;gap:2px;align-items:center;justify-content:center;width:62%;height:62%;pointer-events:none}
-  .kern{width:max(5px,18%);aspect-ratio:1/1.5;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6cf52,#d99a1c);box-shadow:0 1px 1px rgba(120,80,0,.4)}
-  .kbadge{position:absolute;right:6%;bottom:4%;font-size:max(9px,30%);font-weight:700;color:#7a5200;background:rgba(255,255,255,.82);border-radius:6px;padding:0 3px;line-height:1.35;pointer-events:none}
-  #hamster{position:absolute;top:0;left:0;width:var(--cell);height:var(--cell);transition:transform .25s ease;will-change:transform;z-index:3;pointer-events:none}
-  #hamster .rot{width:100%;height:100%;transition:transform .25s ease;display:flex;align-items:center;justify-content:center}
-  #hamster svg{width:82%;height:82%;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
-  #hamster.bonk .rot{animation:bonk .45s ease}
-  @keyframes bonk{0%,100%{transform:rotate(var(--deg))}25%{transform:rotate(var(--deg)) translateX(-8%)}75%{transform:rotate(var(--deg)) translateX(8%)}}
+  /* ---------- App shell ---------- */
+  .topbar{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:11px 18px;box-shadow:0 2px 10px rgba(40,60,90,.04)}
+  .topbar .brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:18px}
+  .topbar .brand .h{font-size:24px}
+  .topbar .spacer{margin-left:auto}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--line2);border-radius:999px;padding:6px 12px 6px 7px;font-weight:800;font-size:13.5px}
+  .chip .av{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900}
+  .chip.teacher .av{background:var(--blue)}
+  .badge{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px;padding:3px 8px;border-radius:8px;background:var(--green-l);color:var(--green-d)}
+  .badge.blue{background:#dff2ff;color:var(--blue-d)}
+  .badge.gold{background:#fff0d6;color:var(--gold-d)}
+  .badge.gray{background:var(--line2);color:var(--muted)}
 
-  /* Status + output */
-  .statusbar{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);flex-wrap:wrap;background:#fafbfd}
-  .stat{flex:1;min-width:78px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:7px 10px;text-align:center}
-  .stat .v{font-size:17px;font-weight:700}
-  .stat .k{font-size:11px;color:var(--muted);margin-top:1px}
-  #out{height:104px;overflow:auto;padding:8px 12px;border-top:1px solid var(--line);font-family:"JetBrains Mono",Consolas,monospace;font-size:12.5px;background:#fff;line-height:1.55}
-  #out .ln{padding:1px 0;border-bottom:1px solid #f3f5f8;white-space:pre-wrap;word-break:break-word}
-  #out .say{color:#2d6cb0}#out .err{color:var(--red);font-weight:600}#out .ok{color:var(--green-d)}#out .info{color:var(--muted)}
-  #out:empty::before{content:"Ausgaben & Meldungen erscheinen hier …";color:#b6bfcc}
+  .container{max-width:1080px;margin:0 auto;padding:22px 18px 60px}
+  .page-head{display:flex;align-items:center;gap:12px;margin:4px 0 20px;flex-wrap:wrap}
+  .page-head h2{font-size:24px;margin:0}
+  .page-head .spacer{margin-left:auto}
+  .muted{color:var(--muted)}
+  .crumb{background:none;border:none;color:var(--blue);font-weight:800;cursor:pointer;font-family:inherit;font-size:14px;padding:0}
 
-  details.help{border-top:1px solid var(--line)}
-  details.help summary{padding:9px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);user-select:none}
-  details.help summary:hover{color:var(--ink)}
-  .help-body{padding:4px 14px 14px;font-size:12.5px;color:var(--ink);columns:2;column-gap:22px}
-  .help-body code{background:#f1f4f8;border:1px solid var(--line);border-radius:6px;padding:1px 5px;font-family:"JetBrains Mono",Consolas,monospace;font-size:12px}
-  .help-body .row{break-inside:avoid;margin:0 0 7px;display:flex;gap:8px;align-items:baseline}
-  .help-body .row span{color:var(--muted)}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  .card.click{cursor:pointer;transition:transform .1s,box-shadow .1s;border:2px solid transparent}
+  .card.click:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(40,60,90,.14);border-color:var(--green-l)}
+  .card h3{margin:0 0 6px;font-size:18px}
+  .card .meta{color:var(--muted);font-size:13.5px;font-weight:700}
+  .codechip{display:inline-flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-weight:800;background:#fff7e9;color:var(--gold-d);border:2px dashed var(--gold);border-radius:11px;padding:7px 12px;font-size:16px;letter-spacing:1px}
+  .empty{text-align:center;color:var(--muted);padding:40px 20px;font-weight:700}
+  .empty .ic{font-size:46px;display:block;margin-bottom:10px;opacity:.7}
 
-  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(20px);background:#26303d;color:#fff;
-    padding:10px 16px;border-radius:11px;font-size:13px;box-shadow:var(--shadow);opacity:0;transition:.25s;pointer-events:none;z-index:50}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .list{display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px}
+  .row .grow{flex:1;min-width:0}
+  .row .grow .t{font-weight:800}
+  .row .grow .s{color:var(--muted);font-size:13px;font-weight:700}
 
-  .hbtn{background:transparent;border:1px solid var(--line);border-radius:8px;color:var(--muted);cursor:pointer;font-size:12.5px;padding:4px 8px;margin-left:5px;transition:.12s}
-  .hbtn:hover{border-color:#cdd5e0;color:var(--ink);background:#fff}
-  footer.credit{text-align:center;font-size:12px;color:var(--muted);padding:1px 0 2px;flex:none}
-  footer.credit strong{color:var(--accent-d);font-weight:700}
+  /* ---------- Matrix ---------- */
+  .matrix-wrap{overflow:auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:6px}
+  table.matrix{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
+  table.matrix th,table.matrix td{padding:10px 12px;text-align:center;white-space:nowrap}
+  table.matrix thead th{position:sticky;top:0;background:#fff;font-weight:900;color:var(--muted);border-bottom:2px solid var(--line);font-size:12.5px}
+  table.matrix th.stu{text-align:left;position:sticky;left:0;background:#fff;z-index:1}
+  table.matrix td.stu{text-align:left;position:sticky;left:0;background:#fff;font-weight:800;z-index:1;border-right:2px solid var(--line)}
+  table.matrix tbody tr:nth-child(even) td{background:#fafcff}
+  table.matrix tbody tr:nth-child(even) td.stu{background:#fafcff}
+  .cell{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;font-size:17px;font-weight:900}
+  .cell.done{background:#e9ffd6;color:var(--green-d)}
+  .cell.pass{background:var(--green);color:#fff}
+  .cell.none{background:var(--line2);color:#c4cdd9}
 
-  @media (max-width:880px){
-    body{overflow:auto}
-    .app{height:auto}
-    .main{grid-template-columns:1fr}
-    .help-body{columns:1}
-    .editor{height:300px;flex:none}
+  /* ---------- Modal ---------- */
+  .modal-bg{position:fixed;inset:0;background:rgba(30,42,60,.45);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50;animation:fade .15s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .modal{background:#fff;border-radius:22px;box-shadow:var(--shadow);width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:24px;animation:pop .25s cubic-bezier(.2,1.2,.4,1)}
+  .modal.wide{max-width:920px}
+  .modal h3{margin:0 0 4px;font-size:21px}
+  .modal .x{float:right;border:none;background:var(--line2);width:34px;height:34px;border-radius:10px;font-size:18px;cursor:pointer;font-weight:900;color:var(--muted)}
+
+  /* ---------- Toast ---------- */
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(24px);background:#2b3a4f;color:#fff;padding:13px 20px;border-radius:14px;font-weight:800;box-shadow:var(--shadow);opacity:0;transition:.25s;pointer-events:none;z-index:120;max-width:90vw}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast.err{background:var(--red-d)} #toast.ok{background:var(--green-d)}
+
+  .spin{width:22px;height:22px;border:3px solid var(--line);border-top-color:var(--green);border-radius:50%;animation:rot .7s linear infinite;display:inline-block}
+  @keyframes rot{to{transform:rotate(360deg)}}
+  .center-load{display:flex;align-items:center;justify-content:center;gap:12px;padding:50px;color:var(--muted);font-weight:800}
+
+  @media (max-width:560px){
+    .auth-card{padding:24px 20px}
+    .role-pick{grid-template-columns:1fr 1fr}
   }
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="logo">
-      <span class="badge">🐹</span>
-      <div>
-        <h1>Hamster-Simulator</h1>
-        <p>Programmieren lernen mit dem Hamster &middot; Web-Edition</p>
-      </div>
-    </div>
-    <label class="sel">Beispiel
-      <select id="exampleSel" title="Beispielprogramm laden"></select>
-    </label>
-    <label class="sel">Territorium
-      <select id="terrSel" title="Territorium wählen"></select>
-    </label>
-  </header>
+  <div id="splash"><div class="h">🐹</div><div class="t">Hamster-Klassenzimmer lädt…</div></div>
+  <div id="app"></div>
+  <div id="toast"></div>
 
-  <div class="main">
-    <!-- LEFT: Editor -->
-    <section class="card left">
-      <div class="panel-head">📝 Programm
-        <span class="sub" id="hint">Schreibe dein Hamster-Programm</span>
-        <button class="hbtn" id="btnExportCode" title="Programm als Datei speichern">⤓ Code</button>
-        <button class="hbtn" id="btnImportCode" title="Programm aus Datei laden">⤒</button>
-        <input type="file" id="fileCode" accept=".ham,.txt,.java" hidden>
-      </div>
-      <div class="editor">
-        <div id="gutter"><div id="gutterInner">1</div></div>
-        <div class="codebox">
-          <pre id="codeHL"></pre>
-          <textarea id="code" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
-          <div id="activeLine"></div>
-        </div>
-      </div>
-      <div class="controls">
-        <button class="btn primary" id="btnRun">▶ Start</button>
-        <button class="btn" id="btnPause" disabled>⏸ Pause</button>
-        <button class="btn" id="btnStep">⏭ Schritt</button>
-        <button class="btn warn" id="btnStop" disabled>⏹ Stopp</button>
-        <button class="btn" id="btnReset" title="Territorium zurücksetzen">⟲ Zurück</button>
-        <button class="btn icon" id="btnSound" title="Ton an/aus">🔊</button>
-        <label class="speed">🐢
-          <input type="range" id="speed" min="1" max="10" value="3">
-          🐇
-        </label>
-      </div>
-      <details class="help">
-        <summary>📖 Befehle &amp; Sprache (Spickzettel)</summary>
-        <div class="help-body">
-          <div class="row"><code>vor();</code><span>einen Schritt vor</span></div>
-          <div class="row"><code>linksUm();</code><span>nach links drehen</span></div>
-          <div class="row"><code>gib();</code><span>ein Korn ablegen</span></div>
-          <div class="row"><code>nimm();</code><span>ein Korn fressen</span></div>
-          <div class="row"><code>vornFrei()</code><span>keine Mauer vorn?</span></div>
-          <div class="row"><code>kornDa()</code><span>Korn auf Kachel?</span></div>
-          <div class="row"><code>maulLeer()</code><span>kein Korn im Maul?</span></div>
-          <div class="row"><code>schreib("…")</code><span>Text ausgeben</span></div>
-          <div class="row"><code>getAnzahlKoerner()</code><span>Körner im Maul</span></div>
-          <div class="row"><code>getReihe() getSpalte()</code><span>Position</span></div>
-          <div class="row"><code>getBlickrichtung()</code><span>NORD/OST/SUED/WEST</span></div>
-          <div class="row"><code>if (…) {…} else {…}</code><span>Verzweigung</span></div>
-          <div class="row"><code>while (…) {…}</code><span>Schleife</span></div>
-          <div class="row"><code>for (int i=0; i&lt;n; i++)</code><span>Zählschleife</span></div>
-          <div class="row"><code>&amp;&amp; &nbsp;|| &nbsp;!</code><span>und / oder / nicht</span></div>
-          <div class="row"><code>void name() {…}</code><span>eigene Prozedur</span></div>
-          <div class="row"><code>boolean test() {…}</code><span>eigene Testfunktion</span></div>
-          <div class="row"><code>Territorium.mauerDa(r,s)</code><span>Mauer an (r,s)?</span></div>
-          <div class="row"><code>Territorium.getAnzahlReihen()</code><span>Anzahl Reihen/Spalten</span></div>
-          <div class="row"><code>int[] a = new int[5];</code><span>Array anlegen</span></div>
-          <div class="row"><code>String s = "Hallo";</code><span>Text-Variable</span></div>
-        </div>
-      </details>
-    </section>
-
-    <!-- RIGHT: Board -->
-    <section class="card right">
-      <div class="panel-head">🌍 Territorium
-        <span class="sub" id="terrName"></span>
-        <button class="hbtn" id="btnExportTerr" title="Territorium als Datei speichern">⤓</button>
-        <button class="hbtn" id="btnImportTerr" title="Territorium aus Datei laden">⤒</button>
-        <input type="file" id="fileTerr" accept=".json,.ter" hidden>
-      </div>
-      <div class="board-toolbar" id="boardToolbar">
-        <button class="tool" id="btnEdit" title="Territorium bearbeiten">✏️ Bearbeiten</button>
-        <div class="tools">
-          <button class="tool active" data-tool="wall">🧱 Mauer</button>
-          <button class="tool" data-tool="korn">🌾 Korn</button>
-          <button class="tool" data-tool="hamster">🐹 Hamster</button>
-          <button class="tool" data-tool="eraser">🧽 Frei</button>
-          <span class="sizebox">Reihen <input id="inRows" type="number" min="1" max="40"></span>
-          <span class="sizebox">Spalten <input id="inCols" type="number" min="1" max="40"></span>
-          <span class="sizebox">Maul <input id="inMaul" type="number" min="0" max="999"></span>
-          <button class="tool" id="btnSaveTerr">💾 Speichern</button>
-          <button class="tool" id="btnDelTerr" title="Eigenes Territorium löschen">🗑️</button>
-        </div>
-      </div>
-      <div id="boardWrap"><div id="board"></div></div>
-      <div class="statusbar">
-        <div class="stat"><div class="v" id="stPos">–</div><div class="k">Position (R/S)</div></div>
-        <div class="stat"><div class="v" id="stDir">–</div><div class="k">Blickrichtung</div></div>
-        <div class="stat"><div class="v" id="stMaul">–</div><div class="k">Körner im Maul</div></div>
-        <div class="stat"><div class="v" id="stFeld">–</div><div class="k">Körner im Feld</div></div>
-      </div>
-      <div id="out"></div>
-    </section>
-  </div>
-  <footer class="credit">🐹 Hamster-Modell: Dietrich Boles · <strong>Web-Neugestaltung: Laurens Offinger</strong></footer>
-</div>
-<div class="toast" id="toast"></div>
-
-<script>
-"use strict";
-/* ============================================================================
-   Hamster-Simulator  ·  Web-Edition
-   Eine originalgetreue Nachbildung des Java-Hamster-Modells (D. Boles) fürs Web.
-   - eigener Interpreter für die imperative Hamster-Java-Syntax
-   - animiertes Territorium, Einzelschritt, Tempo, Editier-Modus
-   ============================================================================ */
-
-/* ---------- Richtungen ---------- */
-const NORD=0, OST=1, SUED=2, WEST=3;
-const DIRS=[
-  {dr:-1,dc:0, deg:0,   name:"Norden", abk:"N ↑"},
-  {dr:0, dc:1, deg:90,  name:"Osten",  abk:"O →"},
-  {dr:1, dc:0, deg:180, name:"Süden",  abk:"S ↓"},
-  {dr:0, dc:-1,deg:270, name:"Westen", abk:"W ←"},
-];
-
-/* ---------- Hamster-Grafik (Blickrichtung = nach oben) ---------- */
-const HAMSTER_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="29" cy="33" rx="13" ry="13" fill="#b07d4e"/><ellipse cx="71" cy="33" rx="13" ry="13" fill="#b07d4e"/>
-  <ellipse cx="29" cy="34" rx="6.5" ry="6.5" fill="#e7c79c"/><ellipse cx="71" cy="34" rx="6.5" ry="6.5" fill="#e7c79c"/>
-  <ellipse cx="50" cy="57" rx="35" ry="39" fill="#cda06b"/>
-  <ellipse cx="26" cy="62" rx="14" ry="17" fill="#dcb887"/><ellipse cx="74" cy="62" rx="14" ry="17" fill="#dcb887"/>
-  <ellipse cx="50" cy="50" rx="23" ry="26" fill="#e8cda1"/>
-  <circle cx="40" cy="46" r="5" fill="#3a2a1a"/><circle cx="60" cy="46" r="5" fill="#3a2a1a"/>
-  <circle cx="41.7" cy="44.3" r="1.7" fill="#fff"/><circle cx="61.7" cy="44.3" r="1.7" fill="#fff"/>
-  <path d="M50 22 l7 9 h-14 z" fill="#d4677a"/>
-  <ellipse cx="50" cy="33" rx="6" ry="4.5" fill="#d4677a"/>
-  <line x1="50" y1="35" x2="50" y2="42" stroke="#a8485a" stroke-width="1.4"/>
-  <g stroke="#fff" stroke-width="1.1" opacity=".85" stroke-linecap="round">
-    <line x1="44" y1="36" x2="22" y2="32"/><line x1="44" y1="39" x2="22" y2="40"/>
-    <line x1="56" y1="36" x2="78" y2="32"/><line x1="56" y1="39" x2="78" y2="40"/>
-  </g>
-</svg>`;
-
-/* ============================================================================
-   1) LEXER
-   ============================================================================ */
-function lex(src){
-  const toks=[]; let i=0, line=1;
-  const KW=["void","boolean","int","if","else","while","do","for","return","break","continue","true","false","new"];
-  const push=(type,value)=>toks.push({type,value,line});
-  const isIdStart=c=>/[A-Za-z_À-ſ]/.test(c);
-  const isId=c=>/[A-Za-z0-9_À-ſ]/.test(c);
-  while(i<src.length){
-    const c=src[i];
-    if(c==="\n"){line++;i++;continue;}
-    if(c===" "||c==="\t"||c==="\r"){i++;continue;}
-    if(c==="/"&&src[i+1]==="/"){ while(i<src.length&&src[i]!=="\n")i++; continue; }
-    if(c==="/"&&src[i+1]==="*"){ i+=2; while(i<src.length&&!(src[i]==="*"&&src[i+1]==="/")){ if(src[i]==="\n")line++; i++; } i+=2; continue; }
-    if(c==='"'){ let s="",st=line; i++; while(i<src.length&&src[i]!=='"'){ if(src[i]==="\\"){ const n=src[i+1]; s+= n==="n"?"\n":n==="t"?"\t":n; i+=2; } else { if(src[i]==="\n")line++; s+=src[i]; i++; } } i++; toks.push({type:"string",value:s,line:st}); continue; }
-    if(/[0-9]/.test(c)){ let n=""; while(i<src.length&&/[0-9]/.test(src[i])){n+=src[i];i++;} push("int",parseInt(n,10)); continue; }
-    if(isIdStart(c)){ let id=""; while(i<src.length&&isId(src[i])){id+=src[i];i++;} push(KW.includes(id)?id:"ident",id); continue; }
-    const two=src.substr(i,2);
-    if(["&&","||","==","!=","<=",">=","++","--","+=","-="].includes(two)){ push("op",two); i+=2; continue; }
-    if("+-*/%<>=!(){};,.[]".includes(c)){ push("op",c); i++; continue; }
-    throw {hamsterError:true, message:"Unerwartetes Zeichen: '"+c+"'", line};
-  }
-  push("eof",null);
-  return toks;
-}
-
-/* ============================================================================
-   2) PARSER  (rekursiver Abstieg)
-   ============================================================================ */
-function parse(src){
-  const toks=lex(src); let p=0;
-  const tk=()=>toks[p];
-  const isOp=v=>tk().type==="op"&&tk().value===v;
-  const isKw=v=>tk().type===v;
-  const perr=m=>{ const t=tk(); throw {hamsterError:true, message:"Syntaxfehler: "+m+" (bei '"+(t.value===null?"Ende":t.value)+"')", line:t.line}; };
-  const eatOp=v=>{ if(!isOp(v))perr("'"+v+"' erwartet"); return toks[p++]; };
-  const eatKw=v=>{ if(!isKw(v))perr("'"+v+"' erwartet"); return toks[p++]; };
-  const eatId=()=>{ if(tk().type!=="ident")perr("Name erwartet"); return toks[p++]; };
-  const MODS=["public","private","protected","static","final","abstract"];
-  const skipMods=()=>{ while(tk().type==="ident"&&MODS.includes(tk().value))p++; };
-
-  function program(){
-    skipMods();
-    if(tk().type==="ident"&&["class","import","package","interface","enum"].includes(tk().value))
-      perr("Klassen-/import-Syntax wird hier nicht unterstützt – bitte nur Methoden und 'void main()' verwenden");
-    const methods={};
-    if(looksLikeMethod()){
-      while(tk().type!=="eof"){ skipMods(); if(tk().type==="eof")break; const m=method(); methods[m.name]=m; }
-      if(!methods.main) perr("Es fehlt 'void main() { … }'");
-      return {methods, main:methods.main.body};
-    }
-    const body=[]; while(tk().type!=="eof") body.push(statement());
-    return {methods, main:body};
-  }
-  function startsType(){ const t=tk(); return t.type==="int"||t.type==="boolean"||(t.type==="ident"&&t.value==="String"); }
-  function parseType(allowVoid){
-    const t=tk(); let base;
-    if(t.type==="int"||t.type==="boolean"){ base=t.value; p++; }
-    else if(allowVoid&&t.type==="void"){ p++; return {base:"void",arr:false}; }
-    else if(t.type==="ident"&&t.value==="String"){ base="String"; p++; }
-    else perr("Typ erwartet");
-    let arr=false; if(isOp("[")){ p++; eatOp("]"); arr=true; }
-    return {base,arr};
-  }
-  function declAhead(){
-    const t=tk();
-    if(t.type==="int"||t.type==="boolean") return true;
-    if(toks[p+1]&&toks[p+1].type==="op"&&toks[p+1].value==="[") return !!(toks[p+2]&&toks[p+2].value==="]");
-    return !!(toks[p+1]&&toks[p+1].type==="ident");
-  }
-  function looksLikeMethod(){
-    const t=tk();
-    if(!(t.type==="void"||t.type==="int"||t.type==="boolean"||(t.type==="ident"&&t.value==="String"))) return false;
-    let q=p+1;
-    if(toks[q]&&toks[q].type==="op"&&toks[q].value==="["){ if(!(toks[q+1]&&toks[q+1].value==="]")) return false; q+=2; }
-    return toks[q]&&toks[q].type==="ident"&&toks[q+1]&&toks[q+1].type==="op"&&toks[q+1].value==="(";
-  }
-  function method(){
-    const line=tk().line; const ret=parseType(true); const name=eatId().value;
-    eatOp("("); const params=[];
-    if(!isOp(")")){ do{ const pty=parseType(false); params.push({type:pty.base,isArr:pty.arr,name:eatId().value}); }while(commaIf()); }
-    eatOp(")"); return {retType:ret.base,name,params,body:block(),line};
-  }
-  const commaIf=()=>{ if(isOp(",")){p++;return true;} return false; };
-  function block(){ eatOp("{"); const b=[]; while(!isOp("}")){ if(tk().type==="eof")perr("'}' erwartet"); b.push(statement()); } eatOp("}"); return b; }
-
-  function statement(){
-    const t=tk();
-    if(isOp("{")) return {kind:"block",body:block(),line:t.line};
-    if(startsType()&&declAhead()) return varDecl();
-    if(t.type==="if") return ifStmt();
-    if(t.type==="while") return whileStmt();
-    if(t.type==="do") return doStmt();
-    if(t.type==="for") return forStmt();
-    if(t.type==="return"){ p++; let v=null; if(!isOp(";"))v=expr(); eatOp(";"); return {kind:"return",value:v,line:t.line}; }
-    if(t.type==="break"){ p++; eatOp(";"); return {kind:"break",line:t.line}; }
-    if(t.type==="continue"){ p++; eatOp(";"); return {kind:"continue",line:t.line}; }
-    if(isOp(";")){ p++; return {kind:"empty",line:t.line}; }
-    if(t.type==="ident"){
-      const n=toks[p+1];
-      if(n.type==="op"&&n.value==="("){ const c=call(); eatOp(";"); return {kind:"callstmt",call:c,line:t.line}; }
-      if(n.type==="op"&&n.value==="["){ const name=eatId().value; eatOp("["); const idx=expr(); eatOp("]"); if(!(isOp("=")||isOp("+=")||isOp("-=")))perr("'=' erwartet"); const op=toks[p++].value; const v=expr(); eatOp(";"); return {kind:"arrset",name,idx,op,value:v,line:t.line}; }
-      if(n.type==="op"&&["=","+=","-="].includes(n.value)){ p++; const op=toks[p++].value; const v=expr(); eatOp(";"); return {kind:"assign",name:t.value,op,value:v,line:t.line}; }
-      if(n.type==="op"&&["++","--"].includes(n.value)){ p++; const op=toks[p++].value; eatOp(";"); return {kind:"incdec",name:t.value,op,line:t.line}; }
-    }
-    perr("Anweisung erwartet");
-  }
-  function varDecl(){ const line=tk().line; const ty=parseType(false); const name=eatId().value; let init=null; if(isOp("=")){p++;init=expr();} eatOp(";"); return {kind:"vardecl",varType:ty.base,isArr:ty.arr,name,init,line}; }
-  function ifStmt(){ const line=tk().line;p++; eatOp("("); const c=expr(); eatOp(")"); const th=[statement()]; let el=null; if(tk().type==="else"){p++; el=[statement()];} return {kind:"if",cond:c,then:th,els:el,line}; }
-  function whileStmt(){ const line=tk().line;p++; eatOp("("); const c=expr(); eatOp(")"); return {kind:"while",cond:c,body:[statement()],line}; }
-  function doStmt(){ const line=tk().line;p++; const b=[statement()]; eatKw("while"); eatOp("("); const c=expr(); eatOp(")"); eatOp(";"); return {kind:"dowhile",body:b,cond:c,line}; }
-  function forStmt(){
-    const line=tk().line;p++; eatOp("(");
-    let init=null; if(!isOp(";")) init=forSimple(true); eatOp(";");
-    let cond=null; if(!isOp(";")) cond=expr(); eatOp(";");
-    let upd=null; if(!isOp(")")) upd=forSimple(false); eatOp(")");
-    return {kind:"for",init,cond,update:upd,body:[statement()],line};
-  }
-  function forSimple(allowDecl){
-    const t=tk();
-    if(allowDecl&&startsType()&&declAhead()){ const line=t.line; const ty=parseType(false); const name=eatId().value; let init=null; if(isOp("=")){p++;init=expr();} return {kind:"vardecl",varType:ty.base,isArr:ty.arr,name,init,line}; }
-    const name=eatId().value;
-    if(isOp("++")||isOp("--")){ const op=toks[p++].value; return {kind:"incdec",name,op,line:t.line}; }
-    if(isOp("=")||isOp("+=")||isOp("-=")){ const op=toks[p++].value; const v=expr(); return {kind:"assign",name,op,value:v,line:t.line}; }
-    perr("Ungültiger for-Ausdruck");
-  }
-  function call(){ const t=tk(); const name=eatId().value; eatOp("("); const args=[]; if(!isOp(")")){ do{ args.push(expr()); }while(commaIf()); } eatOp(")"); return {kind:"call",name,args,line:t.line}; }
-
-  function expr(){ return orE(); }
-  function orE(){ let l=andE(); while(isOp("||")){p++; l={kind:"bin",op:"||",l,r:andE()};} return l; }
-  function andE(){ let l=eqE(); while(isOp("&&")){p++; l={kind:"bin",op:"&&",l,r:eqE()};} return l; }
-  function eqE(){ let l=relE(); while(isOp("==")||isOp("!=")){const op=toks[p++].value; l={kind:"bin",op,l,r:relE()};} return l; }
-  function relE(){ let l=addE(); while(isOp("<")||isOp(">")||isOp("<=")||isOp(">=")){const op=toks[p++].value; l={kind:"bin",op,l,r:addE()};} return l; }
-  function addE(){ let l=mulE(); while(isOp("+")||isOp("-")){const op=toks[p++].value; l={kind:"bin",op,l,r:mulE()};} return l; }
-  function mulE(){ let l=unary(); while(isOp("*")||isOp("/")||isOp("%")){const op=toks[p++].value; l={kind:"bin",op,l,r:unary()};} return l; }
-  function unary(){ if(isOp("!")){p++; return {kind:"not",e:unary()};} if(isOp("-")){p++; return {kind:"neg",e:unary()};} if(isOp("+")){p++; return unary();} return postfix(); }
-  function postfix(){
-    let node=primary();
-    while(true){
-      if(isOp("[")){ p++; const idx=expr(); eatOp("]"); node={kind:"index",arr:node,idx}; }
-      else if(isOp(".")){ p++; const nm=eatId().value;
-        if(isOp("(")){ p++; const args=[]; if(!isOp(")")){do{args.push(expr());}while(commaIf());} eatOp(")"); node={kind:"mcall",obj:node,name:nm,args}; }
-        else node={kind:"member",obj:node,name:nm};
-      } else break;
-    }
-    return node;
-  }
-  function primary(){
-    const t=tk();
-    if(t.type==="int"){p++; return {kind:"int",v:t.value};}
-    if(t.type==="true"){p++; return {kind:"bool",v:true};}
-    if(t.type==="false"){p++; return {kind:"bool",v:false};}
-    if(t.type==="string"){p++; return {kind:"str",v:t.value};}
-    if(isOp("(")){p++; const e=expr(); eatOp(")"); return e;}
-    if(isOp("{")){ p++; const elems=[]; if(!isOp("}")){do{elems.push(expr());}while(commaIf());} eatOp("}"); return {kind:"arraylit",elems}; }
-    if(t.type==="new"){ p++; const bt=tk(); let base; if(bt.type==="int"||bt.type==="boolean"){base=bt.value;p++;} else if(bt.type==="ident"&&bt.value==="String"){base="String";p++;} else perr("nach 'new' wird ein Array-Typ erwartet (z. B. new int[5])"); eatOp("["); const size=expr(); eatOp("]"); return {kind:"newarray",base,size}; }
-    if(t.type==="ident"){ const n=toks[p+1]; if(n.type==="op"&&n.value==="(") return call(); p++; return {kind:"ref",name:t.value,line:t.line}; }
-    perr("Ausdruck erwartet");
-  }
-  return program();
-}
-
-/* ============================================================================
-   3) INTERPRETER  (Generator -> pausierbar / Einzelschritt)
-   ============================================================================ */
-function Env(parent){ this.parent=parent; this.vars=new Map(); }
-Env.prototype.declare=function(n,v){ this.vars.set(n,v); };
-Env.prototype.has=function(n){ return this.vars.has(n)|| (this.parent?this.parent.has(n):false); };
-Env.prototype.get=function(n){ if(this.vars.has(n))return this.vars.get(n); if(this.parent)return this.parent.get(n); throw {hamsterError:true,message:"Unbekannte Variable: "+n}; };
-Env.prototype.set=function(n,v){ if(this.vars.has(n)){this.vars.set(n,v);return;} if(this.parent&&this.parent.has(n)){this.parent.set(n,v);return;} this.vars.set(n,v); };
-
-function makeInterpreter(ast, model){
-  const methods=ast.methods;
-  const globalEnv=new Env(null);
-  const consts={NORD:0,OST:1,SUED:2,WEST:3,BLAU:0,BLUE:0,ROT:1,RED:1,GRUEN:2,GREEN:2,GELB:3,YELLOW:3,CYAN:4,MAGENTA:5,ORANGE:6,PINK:7,GRAU:8,GRAY:8,WEISS:9,WHITE:9};
-  for(const k in consts) globalEnv.declare(k,consts[k]);
-  let steps=0;
-  const guard=()=>{ if(++steps>6000000) throw {hamsterError:true,message:"Zu viele Schritte – vermutlich eine Endlosschleife. (Stopp gedrückt?)"}; };
-  const herr=(type,msg,line)=>({hamsterError:true,type,message:msg,line});
-
-  // --- Modellzugriff ---
-  const ham=()=>model.hamster;
-  const front=()=>{ const h=ham(); return {r:h.row+DIRS[h.dir].dr, c:h.col+DIRS[h.dir].dc}; };
-  const blocked=t=> t.r<0||t.c<0||t.r>=model.rows||t.c>=model.cols||model.walls.has(t.r+","+t.c);
-  const grainsAt=(r,c)=> model.grains.get(r+","+c)||0;
-  const addGrain=(r,c,d)=>{ const k=r+","+c; const n=(model.grains.get(k)||0)+d; if(n<=0)model.grains.delete(k); else model.grains.set(k,n); };
-  function territorium(name,args){
-    switch(name){
-      case "getAnzahlReihen": return model.rows;
-      case "getAnzahlSpalten": return model.cols;
-      case "mauerDa":{ const r=args[0],c=args[1]; return r<0||c<0||r>=model.rows||c>=model.cols||model.walls.has(r+","+c); }
-      case "getAnzahlKoerner":
-        if(args.length>=2){ const r=args[0],c=args[1]; if(r<0||c<0||r>=model.rows||c>=model.cols||model.walls.has(r+","+c)) return 0; return model.grains.get(r+","+c)||0; }
-        { let t=0; for(const v of model.grains.values()) t+=v; return t; }
-      case "getAnzahlHamster":
-        if(args.length>=2){ const r=args[0],c=args[1]; return (model.hamster.row===r&&model.hamster.col===c)?1:0; }
-        return 1;
-      default: throw {hamsterError:true,message:"Unbekannte Methode: Territorium."+name+"()"};
-    }
-  }
-
-  const builtins={
-    *vor(a,line){ guard(); const t=front(); if(blocked(t)) throw herr("MauerDaException","Der Hamster ist gegen eine Mauer gelaufen!",line); const h=ham(); h.row=t.r; h.col=t.c; beep("vor"); yield {line}; },
-    *linksUm(a,line){ guard(); const h=ham(); h.dir=(h.dir+3)%4; beep("turn"); yield {line}; },
-    *gib(a,line){ guard(); const h=ham(); if(h.grains<=0) throw herr("MaulLeerException","Der Hamster hat kein Korn im Maul zum Ablegen!",line); h.grains--; addGrain(h.row,h.col,1); beep("gib"); yield {line}; },
-    *nimm(a,line){ guard(); const h=ham(); if(grainsAt(h.row,h.col)<=0) throw herr("KachelLeerException","Auf dieser Kachel liegt kein Korn zum Fressen!",line); addGrain(h.row,h.col,-1); h.grains++; beep("nimm"); yield {line}; },
-    *vornFrei(){ return !blocked(front()); },
-    *kornDa(){ const h=ham(); return grainsAt(h.row,h.col)>0; },
-    *maulLeer(){ return ham().grains<=0; },
-    *getAnzahlKoerner(){ return ham().grains; },
-    *getReihe(){ return ham().row; },
-    *getSpalte(){ return ham().col; },
-    *getBlickrichtung(){ return ham().dir; },
-    *schreib(a,line){ model.onWrite(a.map(x=>fmt(x)).join("")); yield {line}; },
-    *liesZahl(a){ const s=prompt(a[0]!=null?fmt(a[0]):"Zahl eingeben:"); const n=parseInt(s,10); return isNaN(n)?0:n; },
-    *liesZeichenkette(a){ return prompt(a[0]!=null?fmt(a[0]):"Eingabe:")||""; },
-  };
-  const fmt=x=> typeof x==="boolean"?(x?"true":"false"): Array.isArray(x)?("["+x.map(fmt).join(", ")+"]"): (x==null?"null":String(x));
-
-  function* evalCall(node, env){
-    const args=[]; for(const a of node.args) args.push(yield* evalE(a, env));
-    if(builtins[node.name]) return yield* builtins[node.name](args, node.line);
-    if(methods[node.name]) return yield* callUser(node.name, args);
-    throw {hamsterError:true, message:"Unbekannter Befehl / unbekannte Methode: "+node.name+"()", line:node.line};
-  }
-  function* callUser(name, args){
-    const m=methods[name]; const env=new Env(globalEnv);
-    m.params.forEach((pp,i)=> env.declare(pp.name, args[i]));
-    try{ yield* execList(m.body, env); }
-    catch(e){ if(e&&e.RETURN) return e.value; throw e; }
-    return m.retType==="boolean"?false: m.retType==="int"?0: undefined;
-  }
-
-  function* evalE(n, env){
-    switch(n.kind){
-      case "int": case "bool": case "str": return n.v;
-      case "ref": return env.get(n.name);
-      case "call": return yield* evalCall(n, env);
-      case "index":{ const a=yield* evalE(n.arr,env); const i=yield* evalE(n.idx,env); if(!Array.isArray(a)) throw {hamsterError:true,message:"Kein Array – Zugriff mit [] nicht möglich"}; if(i<0||i>=a.length) throw {hamsterError:true,message:"Array-Index "+i+" außerhalb der Grenzen (Länge "+a.length+")"}; return a[i]; }
-      case "newarray":{ let sz=yield* evalE(n.size,env); sz=Math.max(0,sz|0); const def=n.base==="boolean"?false:n.base==="String"?"":0; const a=[]; for(let i=0;i<sz;i++)a.push(def); return a; }
-      case "arraylit":{ const a=[]; for(const e of n.elems) a.push(yield* evalE(e,env)); return a; }
-      case "member":{ const o=yield* evalE(n.obj,env); if((Array.isArray(o)||typeof o==="string")&&n.name==="length") return o.length; throw {hamsterError:true,message:"Unbekanntes Attribut ."+n.name}; }
-      case "mcall":{
-        if(n.obj.kind==="ref"&&n.obj.name==="Territorium"){ const args=[]; for(const a of n.args) args.push(yield* evalE(a,env)); return territorium(n.name,args); }
-        const o=yield* evalE(n.obj,env); const args=[]; for(const a of n.args) args.push(yield* evalE(a,env));
-        if(typeof o==="string"){
-          switch(n.name){ case "length":return o.length; case "equals":return o===String(args[0]); case "charAt":return o.charAt(args[0])||""; case "substring":return args.length>1?o.substring(args[0],args[1]):o.substring(args[0]); case "indexOf":return o.indexOf(String(args[0])); case "toUpperCase":return o.toUpperCase(); case "toLowerCase":return o.toLowerCase(); default: throw {hamsterError:true,message:"Unbekannte String-Methode ."+n.name+"()"}; }
-        }
-        if(Array.isArray(o)&&n.name==="length") return o.length;
-        throw {hamsterError:true,message:"Unbekannte Methode ."+n.name+"()"};
-      }
-      case "not": return !(yield* evalE(n.e, env));
-      case "neg": return -(yield* evalE(n.e, env));
-      case "bin":{
-        if(n.op==="&&"){ return (yield* evalE(n.l,env)) ? !!(yield* evalE(n.r,env)) : false; }
-        if(n.op==="||"){ return (yield* evalE(n.l,env)) ? true : !!(yield* evalE(n.r,env)); }
-        const a=yield* evalE(n.l,env), b=yield* evalE(n.r,env);
-        switch(n.op){
-          case "+":return a+b; case "-":return a-b; case "*":return a*b;
-          case "/": if(b===0) throw {hamsterError:true,message:"Division durch 0"}; return Math.trunc(a/b);
-          case "%": if(b===0) throw {hamsterError:true,message:"Division durch 0"}; return a%b;
-          case "<":return a<b; case ">":return a>b; case "<=":return a<=b; case ">=":return a>=b;
-          case "==":return a===b; case "!=":return a!==b;
-        }
-      }
-    }
-  }
-
-  function* execList(list, env){ for(const s of list) yield* execS(s, env); }
-  function* execS(s, env){
-    switch(s.kind){
-      case "block": yield* execList(s.body, new Env(env)); break;
-      case "empty": break;
-      case "vardecl":{ let v; if(s.init) v=yield* evalE(s.init,env); else if(s.isArr) v=null; else v=(s.varType==="boolean"?false:s.varType==="String"?"":0); env.declare(s.name,v); yield {line:s.line}; break; }
-      case "arrset":{ const a=env.get(s.name); if(!Array.isArray(a)) throw {hamsterError:true,message:s.name+" ist kein Array",line:s.line}; const i=yield* evalE(s.idx,env); let v=yield* evalE(s.value,env); if(i<0||i>=a.length) throw {hamsterError:true,message:"Array-Index "+i+" außerhalb der Grenzen (Länge "+a.length+")",line:s.line}; if(s.op==="+=")v=a[i]+v; else if(s.op==="-=")v=a[i]-v; a[i]=v; yield {line:s.line}; break; }
-      case "assign":{ let v=yield* evalE(s.value,env); if(s.op==="+=")v=env.get(s.name)+v; else if(s.op==="-=")v=env.get(s.name)-v; env.set(s.name,v); yield {line:s.line}; break; }
-      case "incdec":{ env.set(s.name, env.get(s.name)+(s.op==="++"?1:-1)); yield {line:s.line}; break; }
-      case "callstmt": yield* evalCall(s.call, env); break;
-      case "return":{ const v=s.value? (yield* evalE(s.value,env)) : undefined; throw {RETURN:true, value:v}; }
-      case "break": throw {BREAK:true};
-      case "continue": throw {CONTINUE:true};
-      case "if":{ yield {line:s.line,check:true}; if(yield* evalE(s.cond,env)) yield* execList(s.then,new Env(env)); else if(s.els) yield* execList(s.els,new Env(env)); break; }
-      case "while":{
-        while(true){ yield {line:s.line,check:true}; if(!(yield* evalE(s.cond,env))) break;
-          try{ yield* execList(s.body,new Env(env)); }catch(e){ if(e&&e.BREAK)break; if(e&&e.CONTINUE)continue; throw e; } }
-        break;
-      }
-      case "dowhile":{
-        do{ try{ yield* execList(s.body,new Env(env)); }catch(e){ if(e&&e.BREAK)break; if(e&&e.CONTINUE){} else throw e; }
-            yield {line:s.line,check:true}; }while(yield* evalE(s.cond,env));
-        break;
-      }
-      case "for":{
-        const e=new Env(env); if(s.init) yield* execS(s.init,e);
-        while(true){ yield {line:s.line,check:true}; if(s.cond&&!(yield* evalE(s.cond,e))) break;
-          try{ yield* execList(s.body,new Env(e)); }catch(ex){ if(ex&&ex.BREAK)break; if(ex&&ex.CONTINUE){ if(s.update) yield* execS(s.update,e); continue; } throw ex; }
-          if(s.update) yield* execS(s.update,e); }
-        break;
-      }
-    }
-  }
-
-  function* run(){
-    const env=new Env(globalEnv);
-    try{ yield* execList(ast.main, env); }
-    catch(e){ if(e&&e.RETURN) return; throw e; }
-  }
-  return {run};
-}
-
-/* ============================================================================
-   4) TERRITORIEN  (eingebaut)
-   ============================================================================ */
-// Karten als ASCII:  ' '=frei  '#'=Mauer  0-9=Körner  >,<,^,v=Hamster(Blickr.)
-function buildTerr(rows, maul){
-  const grid=rows; const R=grid.length, C=Math.max(...grid.map(s=>s.length));
-  const walls=new Set(), grains=new Map(); let ham={row:0,col:0,dir:OST,grains:maul||0};
-  for(let r=0;r<R;r++){ const line=grid[r]; for(let c=0;c<C;c++){ const ch=line[c]||" ";
-    if(ch==="#") walls.add(r+","+c);
-    else if(ch>="1"&&ch<="9") grains.set(r+","+c, +ch);
-    else if(ch===">"){ham={row:r,col:c,dir:OST,grains:maul||0};}
-    else if(ch==="<"){ham={row:r,col:c,dir:WEST,grains:maul||0};}
-    else if(ch==="^"){ham={row:r,col:c,dir:NORD,grains:maul||0};}
-    else if(ch==="v"){ham={row:r,col:c,dir:SUED,grains:maul||0};}
-  }}
-  return {rows:R, cols:C, walls, grains, hamster:ham};
-}
-const BUILTIN={
-  "leer":       {name:"Leeres Feld (10×14)", t:()=>buildTerr(["              ","              ","              ","              ","              ","  >           ","              ","              ","              ","              "],0)},
-  "vorWand":    {name:"Vor bis zur Wand", t:()=>buildTerr(["              ","       #      ","  >    #      ","       #      ","       #      ","              "],0)},
-  "koerner":    {name:"Körnerreihe ernten", t:()=>buildTerr(["              ","              ","  >1111111    ","              ","              "],0)},
-  "ernte":      {name:"Feld abernten", t:()=>buildTerr(["############","#>111111111#","#1111111111#","#1111111111#","#1111111111#","#1111111111#","#1111111111#","############"],0)},
-  "saeen":      {name:"Körner säen (Maul=12)", t:()=>buildTerr(["            ","            ","  >         ","            ","            "],12)},
-  "treppe":     {name:"Treppe / Hindernisse", t:()=>buildTerr(["          ","          ","          ","       9  ","      ##  ","  >  ###  ","    ####  ","##########"],0)},
-  "labyrinth":  {name:"Labyrinth", t:()=>buildTerr(["#########","#>      #","####### #","#       #","# #######","#       #","####### #","#1      #","#########"],0)},
-};
-
-/* ============================================================================
-   5) BEISPIELPROGRAMME
-   ============================================================================ */
-const EXAMPLES={
-  "vorWand":{terr:"vorWand", name:"Vor bis zur Wand", code:
-`// Der Hamster läuft, bis eine Mauer im Weg ist.
-void main() {
-    while (vornFrei()) {
-        vor();
-    }
-}`},
-  "rechtsum":{terr:"leer", name:"Eigene Prozedur: rechtsUm", code:
-`// Eine eigene Prozedur definieren: rechtsUm = 3x linksUm
-void main() {
-    vor();
-    vor();
-    rechtsUm();
-    vor();
-    vor();
-}
-
-void rechtsUm() {
-    linksUm();
-    linksUm();
-    linksUm();
-}`},
-  "fressen":{terr:"koerner", name:"Körnerreihe ernten", code:
-`// Läuft nach rechts und frisst alle Körner.
-void main() {
-    sammle();
-    while (vornFrei()) {
-        vor();
-        sammle();
-    }
-}
-
-// Frisst alle Körner auf der aktuellen Kachel
-void sammle() {
-    while (kornDa()) {
-        nimm();
-    }
-}`},
-  "quadrat":{terr:"leer", name:"Quadrat ablaufen (for & Parameter)", code:
-`// Läuft ein Quadrat mit Seitenlänge 4.
-void main() {
-    for (int seite = 0; seite < 4; seite++) {
-        laufeGerade(4);
-        linksUm();
-    }
-}
-
-// Geht n Schritte geradeaus
-void laufeGerade(int n) {
-    for (int i = 0; i < n; i++) {
-        vor();
-    }
-}`},
-  "saeen":{terr:"saeen", name:"Körner säen", code:
-`// Legt auf jeder Kachel ein Korn ab, bis das Maul leer ist.
-void main() {
-    while (!maulLeer() && vornFrei()) {
-        gib();
-        vor();
-    }
-    gib();   // letztes Korn
-}`},
-  "ernte":{terr:"ernte", name:"Ganzes Feld abernten (Zickzack)", code:
-`// Erntet ein rechteckiges Feld reihenweise im Zickzack ab.
-void main() {
-    ernteReihe();
-    while (naechsteReihe()) {
-        ernteReihe();
-    }
-}
-
-void ernteReihe() {
-    sammle();
-    while (vornFrei()) {
-        vor();
-        sammle();
-    }
-}
-
-// Wechselt in die nächste Reihe; false, wenn unten Schluss ist
-boolean naechsteReihe() {
-    if (getBlickrichtung() == OST) {
-        rechtsUm();
-        if (!vornFrei()) { return false; }
-        vor();
-        rechtsUm();
-        return true;
-    } else {
-        linksUm();
-        if (!vornFrei()) { return false; }
-        vor();
-        linksUm();
-        return true;
-    }
-}
-
-void sammle() {
-    while (kornDa()) { nimm(); }
-}
-
-void rechtsUm() {
-    linksUm(); linksUm(); linksUm();
-}`},
-  "labyrinth":{terr:"labyrinth", name:"Labyrinth (rechte-Hand-Methode)", code:
-`// Folgt der rechten Wand, bis das Korn (Ziel) erreicht ist.
-void main() {
-    while (!kornDa()) {
-        rechtsUm();
-        while (!vornFrei()) {
-            linksUm();
-        }
-        vor();
-    }
-    nimm();
-    schreib("Ziel erreicht!");
-}
-
-void rechtsUm() {
-    linksUm(); linksUm(); linksUm();
-}`},
-  "messen":{terr:"ernte", name:"Territorium vermessen (Territorium & String)", code:
-`// Fragt das Territorium ab und gibt eine Auswertung aus.
-void main() {
-    int reihen = Territorium.getAnzahlReihen();
-    int spalten = Territorium.getAnzahlSpalten();
-    schreib("Feldgröße: " + reihen + " x " + spalten);
-    schreib("Körner im Feld: " + Territorium.getAnzahlKoerner());
-    if (Territorium.mauerDa(0, 0)) {
-        schreib("Oben links ist eine Mauer.");
-    }
-}`},
-  "array":{terr:"koerner", name:"Arrays: Werte speichern", code:
-`// Speichert Zwischenergebnisse in einem Array.
-void main() {
-    int[] zahlen = new int[3];
-    zahlen[0] = 5;
-    zahlen[1] = zahlen[0] * 2;
-    zahlen[2] = zahlen[1] + 1;
-    for (int i = 0; i < zahlen.length; i++) {
-        schreib("zahlen[" + i + "] = " + zahlen[i]);
-    }
-}`},
-};
-
-/* ============================================================================
-   6) UI / STEUERUNG
-   ============================================================================ */
-const $=id=>document.getElementById(id);
-const code=$("code"), codeHL=$("codeHL"), gutterInner=$("gutterInner"), activeLine=$("activeLine");
-const board=$("board"), boardWrap=$("boardWrap"), hamsterEl=mkHamster();
-const out=$("out"), toastEl=$("toast");
-
-let model=null, initialModel=null, cellEls=[], cell=40;
-let runState="idle";           // idle | running | paused | finished | error
-let stopFlag=false, stepFlag=false, gen=null;
-let editing=false, curTool="wall", painting=false, lastPaint=null;
-let curTerrKey="vorWand";
-
-/* ---------- Modell kopieren ---------- */
-function cloneModel(m){ return {rows:m.rows, cols:m.cols, walls:new Set(m.walls), grains:new Map(m.grains), hamster:{...m.hamster}}; }
-
-/* ---------- Hamster-Element ---------- */
-function mkHamster(){ const d=document.createElement("div"); d.id="hamster"; d.innerHTML='<div class="rot">'+HAMSTER_SVG+'</div>'; return d; }
-
-/* ---------- Territorium laden ---------- */
-function loadTerritory(key, keepCode){
-  stopRun(true);
-  let def;
-  if(key.startsWith("custom:")){ const raw=localStorage.getItem("hamster.terr."+key.slice(7)); if(!raw){ toast("Territorium nicht gefunden"); return; } def=JSON.parse(raw); model=fromJSON(def); }
-  else { def=BUILTIN[key]||BUILTIN.vorWand; model=def.t(); }
-  initialModel=cloneModel(model);
-  curTerrKey=key;
-  $("terrName").textContent = key.startsWith("custom:")?("Eigenes: "+key.slice(7)) : (BUILTIN[key]?BUILTIN[key].name:"");
-  $("terrSel").value=key;
-  buildBoard(); render();
-  $("inRows").value=model.rows; $("inCols").value=model.cols; $("inMaul").value=model.hamster.grains;
-  $("btnDelTerr").style.display = key.startsWith("custom:")?"inline-flex":"none";
-  localStorage.setItem("hamster.lastTerr", key);
-}
-function fromJSON(d){ return {rows:d.rows, cols:d.cols, walls:new Set(d.walls), grains:new Map(d.grains), hamster:{...d.hamster}}; }
-function toJSON(m){ return {rows:m.rows, cols:m.cols, walls:[...m.walls], grains:[...m.grains], hamster:{...m.hamster}}; }
-
-/* ---------- Board aufbauen ---------- */
-function buildBoard(){
-  board.style.setProperty("--cols",model.cols);
-  board.style.setProperty("--rows",model.rows);
-  board.innerHTML=""; cellEls=[];
-  for(let r=0;r<model.rows;r++){ const row=[];
-    for(let c=0;c<model.cols;c++){ const t=document.createElement("div");
-      t.className="tile g"+((r+c)&1); t.dataset.r=r; t.dataset.c=c; board.appendChild(t); row.push(t); }
-    cellEls.push(row);
-  }
-  board.appendChild(hamsterEl);
-  layoutBoard();
-}
-function layoutBoard(){
-  const availW=boardWrap.clientWidth-32, availH=boardWrap.clientHeight-32;
-  cell=Math.max(16, Math.floor(Math.min(availW/model.cols, availH/model.rows)));
-  board.style.setProperty("--cell",cell+"px");
-  positionHamster(false);
-}
-
-/* ---------- Rendern ---------- */
-function render(){
-  // Wände + Körner
-  for(let r=0;r<model.rows;r++)for(let c=0;c<model.cols;c++){
-    const t=cellEls[r][c]; const wall=model.walls.has(r+","+c);
-    t.classList.toggle("wall",wall);
-    const n=wall?0:(model.grains.get(r+","+c)||0);
-    const sig="n"+n; if(t.dataset.sig!==sig){ t.dataset.sig=sig; t.innerHTML=grainHTML(n); }
-  }
-  positionHamster(true);
-  // Status
-  const h=model.hamster; let total=0; for(const v of model.grains.values()) total+=v;
-  $("stPos").textContent=h.row+" / "+h.col;
-  $("stDir").textContent=DIRS[h.dir].abk;
-  $("stMaul").textContent=h.grains;
-  $("stFeld").textContent=total;
-}
-function grainHTML(n){
-  if(n<=0) return "";
-  if(n<=5){ let s='<div class="grains">'; for(let i=0;i<n;i++)s+='<i class="kern"></i>'; return s+"</div>"; }
-  return '<div class="grains"><i class="kern"></i><i class="kern"></i><i class="kern"></i></div><span class="kbadge">'+n+"</span>";
-}
-function positionHamster(animate){
-  const h=model.hamster;
-  hamsterEl.style.transitionDuration = animate?animDur()+"ms":"0ms";
-  hamsterEl.querySelector(".rot").style.transitionDuration = animate?animDur()+"ms":"0ms";
-  hamsterEl.style.transform=`translate(${h.col*cell}px, ${h.row*cell}px)`;
-  const rot=hamsterEl.querySelector(".rot"); rot.style.setProperty("--deg",DIRS[h.dir].deg+"deg"); rot.style.transform=`rotate(${DIRS[h.dir].deg}deg)`;
-}
-
-/* ---------- Tempo ---------- */
-function delayMs(){ const sp=+$("speed").value; return Math.round(600*Math.pow(0.6,sp-1)); }
-function animDur(){ return Math.max(55, Math.min(300, delayMs())); }
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-
-/* ---------- Editor: Syntax-Highlighting ---------- */
-const SETS={
-  kw:new Set(["if","else","while","do","for","return","break","continue","new","public","private","static","final","class","import","void"]),
-  type:new Set(["int","boolean","void","String"]),
-  lit:new Set(["true","false"]),
-  cmd:new Set(["vor","linksUm","gib","nimm","schreib","init","main","liesZahl","liesZeichenkette"]),
-  test:new Set(["vornFrei","kornDa","maulLeer","getReihe","getSpalte","getBlickrichtung","getAnzahlKoerner"]),
-  cst:new Set(["NORD","OST","SUED","WEST","BLAU","ROT","GRUEN","GELB","CYAN","MAGENTA","ORANGE","PINK","GRAU","WEISS","BLUE","RED","GREEN","YELLOW","GRAY","WHITE","Territorium"]),
-};
-const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-function highlight(src){
-  let o="",i=0; const isId=c=>/[A-Za-z0-9_À-ſ]/.test(c);
-  while(i<src.length){ const c=src[i];
-    if(c==="/"&&src[i+1]==="/"){ let j=i; while(j<src.length&&src[j]!=="\n")j++; o+='<span class="c-com">'+esc(src.slice(i,j))+"</span>"; i=j; continue; }
-    if(c==="/"&&src[i+1]==="*"){ let j=i+2; while(j<src.length&&!(src[j]==="*"&&src[j+1]==="/"))j++; j=Math.min(src.length,j+2); o+='<span class="c-com">'+esc(src.slice(i,j))+"</span>"; i=j; continue; }
-    if(c==='"'){ let j=i+1; while(j<src.length&&src[j]!=='"'){ if(src[j]==="\\")j++; j++; } j=Math.min(src.length,j+1); o+='<span class="c-str">'+esc(src.slice(i,j))+"</span>"; i=j; continue; }
-    if(/[0-9]/.test(c)){ let j=i; while(j<src.length&&/[0-9]/.test(src[j]))j++; o+='<span class="c-num">'+src.slice(i,j)+"</span>"; i=j; continue; }
-    if(/[A-Za-z_À-ſ]/.test(c)){ let j=i; while(j<src.length&&isId(src[j]))j++; const w=src.slice(i,j); let cl="";
-      if(SETS.type.has(w))cl="c-type"; else if(SETS.kw.has(w))cl="c-kw"; else if(SETS.lit.has(w))cl="c-lit"; else if(SETS.cmd.has(w))cl="c-cmd"; else if(SETS.test.has(w))cl="c-test"; else if(SETS.cst.has(w))cl="c-cst";
-      o+= cl?'<span class="'+cl+'">'+w+"</span>":esc(w); i=j; continue; }
-    o+=esc(c); i++;
-  }
-  return o;
-}
-function refreshEditor(){
-  const src=code.value;
-  codeHL.innerHTML=highlight(src)+"\n";
-  const lines=src.split("\n").length;
-  let g=""; for(let i=1;i<=lines;i++)g+=i+"\n"; gutterInner.textContent=g;
-  syncScroll();
-  localStorage.setItem("hamster.code",src);
-}
-function syncScroll(){
-  codeHL.scrollTop=code.scrollTop; codeHL.scrollLeft=code.scrollLeft;
-  gutterInner.style.transform="translateY("+(-code.scrollTop)+"px)";
-  layoutActiveLine();
-}
-let activeLineNo=null;
-function setActiveLine(n,isErr){
-  activeLineNo=n;
-  activeLine.classList.toggle("err",!!isErr);
-  if(n==null){ activeLine.style.display="none"; return; }
-  activeLine.style.display="block"; layoutActiveLine();
-  // sichtbar scrollen
-  const lh=21, top=13+(n-1)*lh;
-  if(top<code.scrollTop+10) code.scrollTop=Math.max(0,top-40);
-  else if(top>code.scrollTop+code.clientHeight-30) code.scrollTop=top-code.clientHeight+50;
-}
-function layoutActiveLine(){
-  if(activeLineNo==null) return;
-  const lh=21;
-  activeLine.style.top=(13+(activeLineNo-1)*lh - code.scrollTop)+"px";
-}
-
-/* ---------- Ausgabe ---------- */
-function logLine(text, cls){ const d=document.createElement("div"); d.className="ln "+(cls||""); d.textContent=text; out.appendChild(d); out.scrollTop=out.scrollHeight; }
-function clearOut(){ out.innerHTML=""; }
-function toast(msg){ toastEl.textContent=msg; toastEl.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>toastEl.classList.remove("show"),1900); }
-
-/* ---------- Sound (synthetisch, ohne Dateien) ---------- */
-let audioCtx=null, soundOn=(localStorage.getItem("hamster.sound")!=="off");
-function ensureAudio(){ try{ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==="suspended") audioCtx.resume(); }catch(e){} }
-function beep(type){
-  if(!soundOn) return; if(type!=="err" && delayMs()<28) return;   // bei Turbo-Tempo stumm
-  try{
-    ensureAudio(); if(!audioCtx) return;
-    const t=audioCtx.currentTime, o=audioCtx.createOscillator(), g=audioCtx.createGain();
-    let f=320,d=0.06,wave="triangle",vol=0.05;
-    if(type==="vor"){f=300;d=0.05;wave="triangle";vol=0.05;}
-    else if(type==="turn"){f=480;d=0.04;wave="square";vol=0.03;}
-    else if(type==="nimm"){f=620;d=0.09;wave="sine";vol=0.07;}
-    else if(type==="gib"){f=380;d=0.09;wave="sine";vol=0.06;}
-    else if(type==="err"){f=130;d=0.28;wave="sawtooth";vol=0.12;}
-    o.type=wave; o.frequency.setValueAtTime(f,t);
-    if(type==="nimm")o.frequency.exponentialRampToValueAtTime(f*1.7,t+d);
-    if(type==="gib")o.frequency.exponentialRampToValueAtTime(f*0.55,t+d);
-    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+d);
-    o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+d);
-  }catch(e){}
-}
-
-/* ---------- Datei-Export / Import ---------- */
-function download(name,text){ const b=new Blob([text],{type:"text/plain;charset=utf-8"}); const u=URL.createObjectURL(b); const a=document.createElement("a"); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),1500); }
-function readFile(input, cb){ const f=input.files&&input.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>cb(String(r.result)); r.readAsText(f); input.value=""; }
-
-/* ---------- Buttons-Status ---------- */
-function updateButtons(){
-  const running=runState==="running", paused=runState==="paused";
-  $("btnRun").disabled = running||paused;
-  $("btnRun").textContent = (runState==="finished"||runState==="error")?"▶ Neu starten":"▶ Start";
-  $("btnPause").disabled = !(running||paused);
-  $("btnPause").textContent = paused?"▶ Weiter":"⏸ Pause";
-  $("btnStop").disabled = !(running||paused);
-  $("btnStep").disabled = running;
-  code.readOnly = running||paused;
-  $("btnEdit").disabled = running||paused;
-  $("terrSel").disabled = running||paused;
-  $("exampleSel").disabled = running||paused;
-}
-
-/* ---------- Programm vorbereiten ---------- */
-function prepareRun(){
-  let ast;
-  try{ ast=parse(code.value); }
-  catch(e){ showError(e); return null; }
-  // Modell auf Startzustand
-  model=cloneModel(initialModel); render();
-  const interp=makeInterpreter(ast, {
-    rows:model.rows, cols:model.cols, walls:model.walls, grains:model.grains, hamster:model.hamster,
-    onWrite:(s)=>logLine("🗨  "+s,"say"),
-  });
-  return interp.run();
-}
-
-/* ---------- Lauf-Schleife ---------- */
-async function startRun(){
-  if(runState==="running"||runState==="paused") return;
-  if(soundOn) ensureAudio();
-  clearOut(); setActiveLine(null);
-  gen=prepareRun(); if(!gen){ runState="error"; updateButtons(); return; }
-  stopFlag=false; stepFlag=false; runState="running"; updateButtons();
-  await driveLoop();
-}
-async function driveLoop(){
-  while(true){
-    if(stopFlag) break;
-    while(runState==="paused" && !stepFlag && !stopFlag) await sleep(40);
-    if(stopFlag) break;
-    const wasStep=stepFlag; stepFlag=false;
-    let res;
-    try{ res=gen.next(); }
-    catch(e){ showError(e); runState="error"; updateButtons(); return; }
-    if(res.done){ runState="finished"; setActiveLine(null); logLine("✓ Programm beendet.","ok"); updateButtons(); return; }
-    const sig=res.value||{};
-    if(sig.line) setActiveLine(sig.line);
-    render();
-    if(wasStep) runState="paused";
-    updateButtons();
-    await sleep(runState==="paused"?0:delayMs());
-  }
-  // gestoppt
-  runState="idle"; setActiveLine(null); stopFlag=false; updateButtons();
-}
-function showError(e){
-  if(e&&e.hamsterError){
-    const where=e.line?" (Zeile "+e.line+")":"";
-    logLine("✖ "+(e.type?e.type+": ":"")+e.message+where,"err");
-    if(e.line) setActiveLine(e.line,true);
-    if(e.type){ hamsterEl.classList.add("bonk"); setTimeout(()=>hamsterEl.classList.remove("bonk"),460); beep("err"); }
-  } else {
-    logLine("✖ Interner Fehler: "+(e&&e.message?e.message:e),"err");
-    console.error(e);
-  }
-}
-
-/* ---------- Step / Pause / Stop / Reset ---------- */
-async function stepOnce(){
-  if(runState==="running") return;
-  if(runState==="idle"||runState==="finished"||runState==="error"){
-    clearOut(); gen=prepareRun(); if(!gen){runState="error";updateButtons();return;}
-    stopFlag=false; runState="paused"; updateButtons();
-  }
-  if(runState==="paused"){ stepFlag=true; if(!driveLoop._active) await driveLoopGuarded(); }
-}
-async function driveLoopGuarded(){ driveLoop._active=true; await driveLoop(); driveLoop._active=false; }
-function pauseResume(){
-  if(runState==="running"){ runState="paused"; updateButtons(); }
-  else if(runState==="paused"){ runState="running"; updateButtons(); }
-}
-function stopRun(silent){
-  if(runState==="running"||runState==="paused"){ stopFlag=true; }
-  runState="idle"; stepFlag=false;
-  if(!silent){ resetModel(); }
-  updateButtons();
-}
-function resetModel(){
-  if(!initialModel) return;
-  model=cloneModel(initialModel);
-  buildBoard(); render(); setActiveLine(null);
-}
-
-/* ============================================================================
-   7) EDITIER-MODUS
-   ============================================================================ */
-function toggleEdit(){
-  editing=!editing;
-  $("boardToolbar").classList.toggle("editing",editing);
-  $("btnEdit").classList.toggle("active",editing);
-  board.parentElement.parentElement.classList.toggle("editing",editing);
-  board.classList.toggle("editing",editing);
-  $("hint").textContent = editing?"Editier-Modus: Kacheln anklicken":"Schreibe dein Hamster-Programm";
-}
-function tileFromEvent(ev){
-  const rect=board.getBoundingClientRect();
-  const x=(ev.touches?ev.touches[0].clientX:ev.clientX)-rect.left;
-  const y=(ev.touches?ev.touches[0].clientY:ev.clientY)-rect.top;
-  const c=Math.floor(x/cell), r=Math.floor(y/cell);
-  if(r<0||c<0||r>=model.rows||c>=model.cols) return null;
-  return {r,c};
-}
-function applyTool(r,c){
-  const key=r+","+c, h=model.hamster;
-  if(curTool==="wall"){ if(h.row===r&&h.col===c) return; model.walls.add(key); model.grains.delete(key); }
-  else if(curTool==="eraser"){ model.walls.delete(key); model.grains.delete(key); }
-  else if(curTool==="korn"){ if(model.walls.has(key)) return; model.grains.set(key,(model.grains.get(key)||0)+1); }
-  else if(curTool==="hamster"){
-    if(model.walls.has(key)) model.walls.delete(key);
-    if(h.row===r&&h.col===c) h.dir=(h.dir+1)%4; else { h.row=r; h.col=c; }
-  }
-  commitEdit();
-}
-function commitEdit(){
-  initialModel=cloneModel(model);
-  $("inMaul").value=model.hamster.grains;
-  render();
-}
-function resizeTerr(){
-  let R=Math.max(1,Math.min(40,+$("inRows").value||model.rows));
-  let C=Math.max(1,Math.min(40,+$("inCols").value||model.cols));
-  const walls=new Set(), grains=new Map();
-  for(const w of model.walls){ const [r,c]=w.split(",").map(Number); if(r<R&&c<C)walls.add(w); }
-  for(const [k,v] of model.grains){ const [r,c]=k.split(",").map(Number); if(r<R&&c<C)grains.set(k,v); }
-  const h={...model.hamster}; h.row=Math.min(h.row,R-1); h.col=Math.min(h.col,C-1);
-  model={rows:R,cols:C,walls,grains,hamster:h};
-  initialModel=cloneModel(model);
-  buildBoard(); render();
-}
-function setMaul(){ model.hamster.grains=Math.max(0,+$("inMaul").value||0); commitEdit(); }
-function saveTerr(){
-  const name=prompt("Name für dein Territorium:","Mein Territorium");
-  if(!name) return;
-  localStorage.setItem("hamster.terr."+name, JSON.stringify(toJSON(model)));
-  let list=JSON.parse(localStorage.getItem("hamster.terrList")||"[]");
-  if(!list.includes(name)){ list.push(name); localStorage.setItem("hamster.terrList",JSON.stringify(list)); }
-  fillTerrSelect(); $("terrSel").value="custom:"+name; curTerrKey="custom:"+name;
-  $("terrName").textContent="Eigenes: "+name; $("btnDelTerr").style.display="inline-flex";
-  toast("💾 „"+name+"“ gespeichert");
-}
-function delTerr(){
-  if(!curTerrKey.startsWith("custom:")) return;
-  const name=curTerrKey.slice(7);
-  if(!confirm("Territorium „"+name+"“ löschen?")) return;
-  localStorage.removeItem("hamster.terr."+name);
-  let list=JSON.parse(localStorage.getItem("hamster.terrList")||"[]").filter(x=>x!==name);
-  localStorage.setItem("hamster.terrList",JSON.stringify(list));
-  fillTerrSelect(); loadTerritory("vorWand");
-}
-
-/* ============================================================================
-   8) INITIALISIERUNG / EVENTS
-   ============================================================================ */
-function fillTerrSelect(){
-  const sel=$("terrSel"); sel.innerHTML="";
-  for(const k in BUILTIN){ const o=document.createElement("option"); o.value=k; o.textContent=BUILTIN[k].name; sel.appendChild(o); }
-  const list=JSON.parse(localStorage.getItem("hamster.terrList")||"[]");
-  if(list.length){ const og=document.createElement("optgroup"); og.label="Eigene Territorien";
-    list.forEach(n=>{ const o=document.createElement("option"); o.value="custom:"+n; o.textContent=n; og.appendChild(o); }); sel.appendChild(og); }
-}
-function fillExampleSelect(){
-  const sel=$("exampleSel");
-  const o0=document.createElement("option"); o0.value=""; o0.textContent="– Beispiel wählen –"; sel.appendChild(o0);
-  for(const k in EXAMPLES){ const o=document.createElement("option"); o.value=k; o.textContent=EXAMPLES[k].name; sel.appendChild(o); }
-}
-function loadExample(key){
-  const ex=EXAMPLES[key]; if(!ex) return;
-  code.value=ex.code; refreshEditor();
-  if(ex.terr) loadTerritory(ex.terr);
-  $("exampleSel").value="";
-  $("hint").textContent=ex.name;
-}
-
-function init(){
-  fillTerrSelect(); fillExampleSelect();
-  // gespeicherten Code / Territorium wiederherstellen
-  const savedCode=localStorage.getItem("hamster.code");
-  code.value = savedCode!=null ? savedCode : EXAMPLES.vorWand.code;
-  refreshEditor();
-  const lastTerr=localStorage.getItem("hamster.lastTerr");
-  loadTerritory(lastTerr && (BUILTIN[lastTerr]||lastTerr.startsWith("custom:")) ? lastTerr : "vorWand");
-  updateButtons();
-
-  // Editor-Events
-  code.addEventListener("input",refreshEditor);
-  code.addEventListener("scroll",syncScroll);
-  code.addEventListener("keydown",e=>{ if(e.key==="Tab"){ e.preventDefault(); const s=code.selectionStart,en=code.selectionEnd; code.value=code.value.slice(0,s)+"    "+code.value.slice(en); code.selectionStart=code.selectionEnd=s+4; refreshEditor(); } });
-
-  // Steuer-Buttons
-  $("btnRun").onclick=startRun;
-  $("btnPause").onclick=pauseResume;
-  $("btnStep").onclick=stepOnce;
-  $("btnStop").onclick=()=>stopRun(false);
-  $("btnReset").onclick=()=>{ stopRun(true); resetModel(); clearOut(); runState="idle"; updateButtons(); };
-  $("speed").oninput=()=>{};
-  $("btnSound").textContent=soundOn?"🔊":"🔇";
-  $("btnSound").onclick=()=>{ soundOn=!soundOn; localStorage.setItem("hamster.sound",soundOn?"on":"off"); $("btnSound").textContent=soundOn?"🔊":"🔇"; if(soundOn) ensureAudio(); };
-  $("btnExportCode").onclick=()=>download("hamsterprogramm.ham", code.value);
-  $("btnImportCode").onclick=()=>$("fileCode").click();
-  $("fileCode").onchange=()=>readFile($("fileCode"), txt=>{ code.value=txt; refreshEditor(); toast("Programm geladen"); });
-  $("btnExportTerr").onclick=()=>download((curTerrKey.replace(/^custom:/,"")||"territorium")+".json", JSON.stringify(toJSON(model)));
-  $("btnImportTerr").onclick=()=>$("fileTerr").click();
-  $("fileTerr").onchange=()=>readFile($("fileTerr"), txt=>{ try{ const d=JSON.parse(txt); stopRun(true); model=fromJSON(d); initialModel=cloneModel(model); curTerrKey="import"; $("terrName").textContent="Importiert"; $("inRows").value=model.rows; $("inCols").value=model.cols; $("inMaul").value=model.hamster.grains; buildBoard(); render(); $("btnDelTerr").style.display="none"; toast("Territorium geladen"); }catch(e){ toast("Ungültige Datei"); } });
-
-  // Auswahl
-  $("exampleSel").onchange=e=>{ if(e.target.value) loadExample(e.target.value); };
-  $("terrSel").onchange=e=>loadTerritory(e.target.value);
-
-  // Editier-Modus
-  $("btnEdit").onclick=toggleEdit;
-  document.querySelectorAll(".tool[data-tool]").forEach(b=>b.onclick=()=>{ curTool=b.dataset.tool; document.querySelectorAll(".tool[data-tool]").forEach(x=>x.classList.toggle("active",x===b)); });
-  $("inRows").onchange=resizeTerr; $("inCols").onchange=resizeTerr; $("inMaul").onchange=setMaul;
-  $("btnSaveTerr").onclick=saveTerr; $("btnDelTerr").onclick=delTerr;
-
-  // Board-Painting
-  const down=e=>{ if(!editing)return; const t=tileFromEvent(e); if(!t)return; painting=true; lastPaint=null; if(curTool!=="hamster"||true){ applyTool(t.r,t.c); lastPaint=t.r+","+t.c; } e.preventDefault(); };
-  const move=e=>{ if(!editing||!painting)return; if(curTool==="hamster")return; const t=tileFromEvent(e); if(!t)return; const k=t.r+","+t.c; if(k===lastPaint)return; lastPaint=k; applyTool(t.r,t.c); };
-  const up=()=>{ painting=false; };
-  board.addEventListener("mousedown",down); board.addEventListener("mousemove",move); window.addEventListener("mouseup",up);
-  board.addEventListener("touchstart",down,{passive:false}); board.addEventListener("touchmove",move,{passive:false}); window.addEventListener("touchend",up);
-
-  // Resize
-  let rT; window.addEventListener("resize",()=>{ clearTimeout(rT); rT=setTimeout(()=>{ layoutBoard(); layoutActiveLine(); },80); });
-  if(window.ResizeObserver) new ResizeObserver(()=>{ layoutBoard(); }).observe(boardWrap);
-}
-init();
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
