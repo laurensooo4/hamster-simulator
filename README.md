@@ -5,14 +5,27 @@ Klassen, Aufgaben (mit Territorium-Editor), Abgaben und Abgabe-Matrix.
 
 **Live: https://laurensooo4.github.io/hamster-simulator/**
 
-## Demo-Logins
+## Zugang
 
-| Rolle | Login |
-|---|---|
-| 👨‍🏫 Lehrer | `testlehrer` / `mainmixaufmute` |
-| 🎒 Schüler | `max.muster` / `passwort123` |
+Zugangsdaten gibt es von der Schule. Schüler:innen können sich registrieren und treten
+mit einem **Klassencode** bei; Lehrkräfte brauchen einen **persönlichen Einladungscode**,
+den die Administration im Admin-Bereich erzeugt.
 
-Oder neu registrieren → Rolle wählen → Schüler:innen treten mit einem Klassencode bei.
+## Herkunft & Abgrenzung
+
+Beide Simulator-Werkzeuge sind **eigenständige Neuimplementierungen in JavaScript**:
+
+- **Hamster:** angelehnt an das [Java-Hamster-Modell](https://www.java-hamster-modell.de/)
+  von Dr.-Ing. Dietrich Boles (Universität Oldenburg). Es wurde **kein Programmcode und
+  keine Grafik** übernommen.
+- **Netzwerke:** angelehnt an [FILIUS](https://www.lernsoftware-filius.de/)
+  (Universität Siegen). Es wurde **kein Quellcode** übernommen; die Oberflächen-Grafiken
+  in `filius-gfx/` stammen jedoch aus FILIUS und werden unter der **GNU GPL v3**
+  weitergegeben — siehe [`filius-gfx/HERKUNFT.md`](filius-gfx/HERKUNFT.md).
+
+Beides sind **keine offiziellen Produkte** der genannten Projekte oder Universitäten.
+Vollständige Urheber-, Lizenz- und Quellenangaben: [`lizenzen.html`](lizenzen.html)
+und [`LICENSE`](LICENSE).
 
 ## Funktionen
 
